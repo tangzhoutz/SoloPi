@@ -32,6 +32,7 @@ import com.alipay.hulu.common.injector.InjectorService;
 import com.alipay.hulu.common.tools.BackgroundExecutor;
 import com.alipay.hulu.common.utils.LogUtil;
 import com.alipay.hulu.common.utils.MiscUtil;
+import com.alipay.hulu.common.utils.StringUtil;
 import com.alipay.hulu.fragment.CaseDescEditFragment;
 import com.alipay.hulu.fragment.CaseStepEditFragment;
 import com.alipay.hulu.shared.io.bean.RecordCaseInfo;
@@ -97,7 +98,7 @@ public class CaseEditActivity extends BaseActivity {
 
         saved = false;
         caseSaveListeners.clear();
-        mHeadPanel.setMiddleTitle("用例编辑");
+        mHeadPanel.setMiddleTitle(getString(R.string.activity__case_edit));
 
         mHeadPanel.setBackIconClickListener(new View.OnClickListener() {
             @Override
@@ -132,13 +133,13 @@ public class CaseEditActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         if (shouldSave && !saved) {
-            LauncherApplication.getInstance().showDialog(this, "是否保存用例", "是", new Runnable() {
+            LauncherApplication.getInstance().showDialog(this, getString(R.string.case_edit__should_save_case), getString(R.string.constant__yes), new Runnable() {
                 @Override
                 public void run() {
                     updateLocalCase();
                     finish();
                 }
-            }, "否", new Runnable() {
+            }, getString(R.string.constant__no), new Runnable() {
                 @Override
                 public void run() {
                     finish();
@@ -152,7 +153,7 @@ public class CaseEditActivity extends BaseActivity {
     /**
      * 包装用例信息
      */
-    private void wrapRecordCase() {
+    public void wrapRecordCase() {
         for (WeakReference<OnCaseSaveListener> listenerRef: caseSaveListeners) {
             if (listenerRef.get() != null) {
                 listenerRef.get().onCaseSave();
@@ -169,7 +170,7 @@ public class CaseEditActivity extends BaseActivity {
             public void run() {
                 wrapRecordCase();
                 GreenDaoManager.getInstance().getRecordCaseInfoDao().save(mRecordCase);
-                toastShort("更新成功");
+                toastShort(getString(R.string.case__update_success));
                 InjectorService.g().pushMessage(NewRecordActivity.NEED_REFRESH_LOCAL_CASES_LIST);
                 saved = true;
             }
@@ -183,6 +184,10 @@ public class CaseEditActivity extends BaseActivity {
         if (resultCode != RESULT_OK) {
             return;
         }
+    }
+
+    public RecordCaseInfo getRecordCase() {
+        return mRecordCase;
     }
 
     private static class CustomPagerAdapter extends FragmentPagerAdapter {
@@ -216,7 +221,7 @@ public class CaseEditActivity extends BaseActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return position == 1? "用例信息": "用例步骤";
+            return position == 1? StringUtil.getString(R.string.case_edit__info): StringUtil.getString(R.string.case_edit__steps);
         }
         @Override
         public int getCount() {

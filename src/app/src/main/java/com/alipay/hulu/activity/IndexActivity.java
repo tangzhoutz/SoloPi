@@ -15,6 +15,7 @@
  */
 package com.alipay.hulu.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -49,6 +50,7 @@ import com.alipay.hulu.common.utils.FileUtils;
 import com.alipay.hulu.common.utils.LogUtil;
 import com.alipay.hulu.common.utils.PermissionUtil;
 import com.alipay.hulu.common.utils.StringUtil;
+import com.alipay.hulu.event.ScanSuccessEvent;
 import com.alipay.hulu.ui.ColorFilterRelativeLayout;
 import com.alipay.hulu.ui.HeadControlPanel;
 import com.alipay.hulu.upgrade.PatchRequest;
@@ -135,16 +137,16 @@ public class IndexActivity extends BaseActivity {
                                     webSettings.setLoadWithOverviewMode(true);
                                     webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
                                     webView.loadData(content, null, null);
-                                    new AlertDialog.Builder(IndexActivity.this).setTitle("发现新版本: " + release.getTag_name())
+                                    new AlertDialog.Builder(IndexActivity.this).setTitle(getString(R.string.index__new_version, release.getTag_name()))
                                             .setView(webView)
-                                            .setPositiveButton("前往更新", new DialogInterface.OnClickListener() {
+                                            .setPositiveButton(R.string.index__go_update, new DialogInterface.OnClickListener() {
 
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     Uri uri = Uri.parse(release.getHtml_url());
                                                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                                                     startActivity(intent);
                                                 }
-                                            }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                            }).setNegativeButton(R.string.constant__cancel, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.dismiss();
@@ -208,6 +210,19 @@ public class IndexActivity extends BaseActivity {
                 return o1.index - o2.index;
             }
         });
+        mPanel.setLeftIconClickListener(R.drawable.icon_scan, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PermissionUtil.requestPermissions(Collections.singletonList(Manifest.permission.CAMERA), IndexActivity.this, new PermissionUtil.OnPermissionCallback() {
+                    @Override
+                    public void onPermissionResult(boolean result, String reason) {
+                        Intent intent = new Intent(IndexActivity.this, QRScanActivity.class);
+                        intent.putExtra(QRScanActivity.KEY_SCAN_TYPE, ScanSuccessEvent.SCAN_TYPE_OTHER);
+                        startActivity(intent);
+                    }
+                });
+            }
+        });
 
         CustomAdapter adapter = new CustomAdapter(this, entries);
         if (entries.size() <= 3) {
@@ -218,7 +233,7 @@ public class IndexActivity extends BaseActivity {
         mGridView.setAdapter(adapter);
 
         // 有写权限，申请下
-        PatchRequest.updatePatchList();
+        PatchRequest.updatePatchList(null);
     }
 
     /**
@@ -333,7 +348,7 @@ public class IndexActivity extends BaseActivity {
                         }
                     });
                 } else {
-                    toastLong("日志打包失败");
+                    toastLong(getString(R.string.index__package_crash_failed));
 
                     // 回设检查时间，以便下次上报
                     SPService.putLong(SPService.KEY_ERROR_CHECK_TIME, errorTime - 10);
@@ -358,7 +373,7 @@ public class IndexActivity extends BaseActivity {
         public Entry(EntryActivity activity, Class<? extends Activity> target) {
             this.iconId = activity.icon();
             String name = activity.name();
-            if (activity.nameRes() > 0) {
+            if (activity.nameRes() != 0) {
                 name = StringUtil.getString(activity.nameRes());
             }
             this.name = name;
@@ -468,6 +483,8 @@ public class IndexActivity extends BaseActivity {
 
             if (item.saturation != 1F) {
                 viewHolder.background.setSaturation(item.saturation);
+            } else {
+                viewHolder.background.setSaturation(1);
             }
 
             convertView.setOnClickListener(new View.OnClickListener() {

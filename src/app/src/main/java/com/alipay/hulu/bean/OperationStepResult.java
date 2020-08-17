@@ -13,14 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.hulu.shared.node.tree.export;
+package com.alipay.hulu.bean;
 
-import com.alipay.hulu.shared.node.action.OperationMethod;
-import com.alipay.hulu.shared.node.tree.AbstractNodeTree;
+
+import java.io.File;
 
 /**
- * Created by qiaoruikai on 2018/10/10 5:15 PM.
+ * 步骤执行结果
  */
-public interface BaseStepProvider<T> {
-    T exportStep(AbstractNodeTree root, AbstractNodeTree currentNode, OperationMethod method);
+public class OperationStepResult {
+    /**
+     * 操作步骤信息
+     */
+    public String method;
+
+    /**
+     * 失败原因
+     */
+    public String error;
+
+    /**
+     * 执行结果
+     */
+    public boolean result;
+
+    /**
+     * 结果截图
+     */
+    public File screenCaptureFile;
 }

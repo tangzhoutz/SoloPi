@@ -16,33 +16,26 @@
 package com.alipay.hulu.fragment;
 
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alipay.hulu.R;
-import com.alipay.hulu.activity.BaseActivity;
 import com.alipay.hulu.activity.BatchExecutionActivity;
-import com.alipay.hulu.activity.MyApplication;
 import com.alipay.hulu.adapter.BatchExecutionListAdapter;
-import com.alipay.hulu.common.application.LauncherApplication;
 import com.alipay.hulu.common.tools.BackgroundExecutor;
 import com.alipay.hulu.common.utils.PermissionUtil;
+import com.alipay.hulu.common.utils.StringUtil;
 import com.alipay.hulu.replay.BatchStepProvider;
 import com.alipay.hulu.service.CaseReplayManager;
 import com.alipay.hulu.shared.io.bean.RecordCaseInfo;
 import com.alipay.hulu.shared.io.db.GreenDaoManager;
 import com.alipay.hulu.shared.io.db.RecordCaseInfoDao;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -66,7 +59,7 @@ public class BatchExecutionFragment extends BaseFragment {
     }
 
     public static String getTypeName(int type) {
-        return "本地";
+        return StringUtil.getString(R.string.replay_list__local);
     }
 
     public static BatchExecutionFragment newInstance(int type) {
@@ -143,10 +136,6 @@ public class BatchExecutionFragment extends BaseFragment {
     private void initEmptyView(View view) {
         mEmptyView = view.findViewById(R.id.empty_view_container);
         mEmptyTextView = (TextView) view.findViewById(R.id.empty_text);
-        mEmptyTextView.setText("没有发现用例");
-    }
-
-    private void showEnableAccessibilityServiceHint() {
-        Toast.makeText(getContext(), "请在辅助功能中开启Soloπ", Toast.LENGTH_LONG).show();
+        mEmptyTextView.setText(R.string.batch__no_case);
     }
 }

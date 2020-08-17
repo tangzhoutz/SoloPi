@@ -139,6 +139,7 @@ void *(**On*Event);
 -keep class com.alipay.hulu.common.utils.ClassUtil$PatchVersionInfo { *; }
 -keep class com.alipay.hulu.common.utils.patch.PatchDescription {*;}
 
+-keep class com.alipay.hulu.common.utils.DeviceInfoUtil {*;}
 
 #内部方法
 -keepattributes EnclosingMethod
@@ -176,6 +177,10 @@ void *(**On*Event);
 #PrepareWorker
 -keep interface com.alipay.hulu.shared.node.utils.prepare.PrepareWorker { *; }
 -keep @com.alipay.hulu.shared.node.utils.prepare.PrepareWorker$PrepareTool class * implements com.alipay.hulu.shared.node.utils.prepare.PrepareWorker { *; }
+
+# SchemeResolver
+-keep interface com.alipay.hulu.common.scheme.SchemeActionResolver { *; }
+-keep @com.alipay.hulu.common.scheme.SchemeResolver class * implements com.alipay.hulu.common.scheme.SchemeActionResolver { *; }
 
 #Github Replease
 -keep class com.alipay.hulu.bean.GithubReleaseBean { *; }
@@ -244,7 +249,7 @@ public com.alipay.hulu.common.utils.patch.PatchContext getContext();
 -dontwarn android.support.v4.**
 -keep class android.support.** {*;}
 -keepattributes Exceptions,InnerClasses,Signature
-#视频直播混淆
+
 #fastjson
 -dontwarn com.alibaba.fastjson.**
 -keep class com.alibaba.fastjson.** { *; }

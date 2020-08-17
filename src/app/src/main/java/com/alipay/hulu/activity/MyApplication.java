@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.view.WindowManager;
 
+import com.alipay.hulu.R;
 import com.alipay.hulu.bean.CaseStepHolder;
 import com.alipay.hulu.bean.ReplayResultBean;
 import com.alipay.hulu.common.application.LauncherApplication;
@@ -59,6 +60,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import cn.dreamtobe.filedownloader.OkHttp3Connection;
 
 public class MyApplication extends LauncherApplication {
     private static final String TAG = "MyApplication";
@@ -164,7 +167,7 @@ public class MyApplication extends LauncherApplication {
                 lastTime = appInfo;
                 String app = content[1].split(":")[1].trim();
 
-                // 如果发现了葫芦娃或者目标应用的Anr信息
+                // 如果发现了SoloPi或者目标应用的Anr信息
                 if (StringUtil.equals(getInstance().appPackage, app) || StringUtil.equals(app, MyApplication.getInstance().getPackageName())) {
                     LogUtil.w(TAG, "Find anr info: " + app);
 
@@ -181,7 +184,7 @@ public class MyApplication extends LauncherApplication {
 
                     LogUtil.w(TAG, "Copy anr file result: " + result);
 
-                    MyApplication.getInstance().showToast("发现anr信息，已拷贝至: " + pathInShell);
+                    MyApplication.getInstance().showToast(getString(R.string.app__find_anr_info, pathInShell));
                 }
             }
         }
@@ -348,6 +351,11 @@ public class MyApplication extends LauncherApplication {
 
             }
         });
+
+        // Init the FileDownloader with the OkHttp3Connection.Creator.
+        FileDownloader.setupOnApplicationOnCreate(this)
+                .connectionCreator(new OkHttp3Connection.Creator())
+                .commit();
     }
 
     /**
@@ -423,7 +431,7 @@ public class MyApplication extends LauncherApplication {
                 this.appName = appName[0];
             } else {
                 this.appPackage = "-";
-                this.appName = "全局";
+                this.appName = getString(R.string.constant_global);
             }
         }
         injectorService.pushMessage(SubscribeParamEnum.APP, appPackage, true);
@@ -471,7 +479,7 @@ public class MyApplication extends LauncherApplication {
                 this.appName = appName[0];
             } else {
                 this.appPackage = "-";
-                this.appName = "全局";
+                this.appName = getString(R.string.constant_global);
             }
         }
 
@@ -483,7 +491,7 @@ public class MyApplication extends LauncherApplication {
 
     private void initLibraries() {
         initGreenDao();
-        initFileDownloader();
+//        initFileDownloader();
 
         curSysInputMethod = Settings.Secure.getString(getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD);
 

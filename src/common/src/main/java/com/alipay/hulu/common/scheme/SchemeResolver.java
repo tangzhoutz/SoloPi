@@ -13,14 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.hulu.shared.io.constant;
+package com.alipay.hulu.common.scheme;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Created by qiaoruikai on 2018/10/10 8:54 PM.
+ * Created by qiaoruikai on 2019/11/8 11:09 PM.
  */
-public class Constant {
+@Target(TYPE)
+@Retention(RUNTIME)
+public @interface SchemeResolver {
     /**
-     * 通知记录操作步骤
+     * 解析的Action
      */
-    public static final String NOTIFY_RECORD_STEP = "notifyRecordStep";
+    String value();
+
+    /**
+     * 解析顺序
+     * @return
+     */
+    int index() default 1;
 }
